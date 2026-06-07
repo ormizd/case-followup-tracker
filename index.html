@@ -104,16 +104,20 @@
       padding: 1rem;
       margin-bottom: 1.25rem;
     }
-    .add-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .add-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; align-items: end; }
     .add-grid label { font-size: 12px; color: var(--text-tertiary); display: block; margin-bottom: 3px; }
     .add-grid input, .add-grid select {
-      width: 100%; font-size: 14px; padding: 6px 8px;
+      width: 100%; font-size: 14px; padding: 7px 8px;
       border: 0.5px solid var(--border-secondary);
       border-radius: var(--radius-md);
       background: var(--bg-secondary);
       color: var(--text);
       outline: none;
+      height: 36px;
+      -webkit-appearance: none;
+      appearance: none;
     }
+    .add-grid select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 28px; }
     .add-grid input:focus, .add-grid select:focus { border-color: var(--border-info); }
     .add-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
     .add-hint { font-size: 11px; color: var(--text-tertiary); }
