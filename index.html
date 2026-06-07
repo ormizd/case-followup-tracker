@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Follow-Up Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f3;
+      --bg-warning: #fefce8;
+      --bg-danger: #fef2f2;
+      --bg-success: #f0fdf4;
+      --bg-info: #eff6ff;
+      --text: #1a1a1a;
+      --text-secondary: #555550;
+      --text-tertiary: #888780;
+      --text-warning: #854f0b;
+      --text-danger: #a32d2d;
+      --text-success: #3b6d11;
+      --text-info: #185fa5;
+      --border: rgba(0,0,0,0.12);
+      --border-secondary: rgba(0,0,0,0.22);
+      --border-warning: #ba7517;
+      --border-danger: #e24b4a;
+      --border-success: #639922;
+      --border-info: #378add;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a;
+        --bg-secondary: #252523;
+        --bg-warning: #2a1f00;
+        --bg-danger: #2a0f0f;
+        --bg-success: #0f2a0f;
+        --bg-info: #0a1f35;
+        --text: #f0ede8;
+        --text-secondary: #b4b2a9;
+        --text-tertiary: #888780;
+        --text-warning: #fac775;
+        --text-danger: #f09595;
+        --text-success: #97c459;
+        --text-info: #85b7eb;
+        --border: rgba(255,255,255,0.1);
+        --border-secondary: rgba(255,255,255,0.2);
+        --border-warning: #ba7517;
+        --border-danger: #a32d2d;
+        --border-success: #3b6d11;
+        --border-info: #185fa5;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem 1rem;
+    }
+
+    .container { max-width: 600px; margin: 0 auto; }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .today-banner {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .date-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .follow-count { font-size: 26px; font-weight: 500; color: var(--text); }
+    .follow-sub { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+    .tabs { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 1.25rem; }
+    .tab-btn { background: none; border: none; padding: 0.5rem 1rem; font-size: 14px; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+    .tab-btn:hover:not(.active) { color: var(--text); }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .section-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+
+    .add-section {
+      background: var(--bg-secondary);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .add-row { display: flex; gap: 8px; margin-top: 8px; }
+    .add-row input {
+      flex: 1;
+      font-size: 14px;
+      padding: 6px 10px;
+      border: 0.5px solid var(--border-secondary);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+    }
+    .add-row input:focus { border-color: var(--border-info); }
+    .add-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
+
+    .case-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+
+    .case-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .case-card.due-today { border-color: var(--border-warning); background: var(--bg-warning); }
+    .case-card.overdue { border-color: var(--border-danger); background: var(--bg-danger); }
+    .case-card.closeable { border-color: var(--border-success); background: var(--bg-success); }
+
+    .case-id { font-size: 15px; font-weight: 500; min-width: 56px; color: var(--text); }
+    .case-meta { flex: 1; }
+    .case-next { font-size: 13px; color: var(--text-secondary); }
+    .case-count { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+
+    .badge { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-md); font-weight: 500; white-space: nowrap; }
+    .badge-today { background: var(--bg-warning); color: var(--text-warning); border: 0.5px solid var(--border-warning); }
+    .badge-overdue { background: var(--bg-danger); color: var(--text-danger); border: 0.5px solid var(--border-danger); }
+    .badge-close { background: var(--bg-success); color: var(--text-success); border: 0.5px solid var(--border-success); }
+    .badge-ok { background: var(--bg-secondary); color: var(--text-tertiary); border: 0.5px solid var(--border); }
+
+    .btn-row { display: flex; gap: 6px; }
+
+    button.action {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: var(--radius-md);
+      border: 0.5px solid var(--border-secondary);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    button.action:hover { background: var(--bg-secondary); }
+    button.action.primary { color: var(--text-info); border-color: var(--border-info); }
+    button.action.primary:hover { background: var(--bg-info); }
+    button.action.danger { color: var(--text-danger); border-color: var(--border-danger); }
+    button.action.danger:hover { background: var(--bg-danger); }
+    button.action.success { color: var(--text-success); border-color: var(--border-success); }
+    button.action.success:hover { background: var(--bg-success); }
+
+    .empty-state { text-align: center; padding: 2rem; color: var(--text-tertiary); font-size: 14px; line-height: 1.6; }
+
+    .log-entry { font-size: 13px; color: var(--text-secondary); padding: 7px 0; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; gap: 8px; }
+    .log-entry:last-child { border-bottom: none; }
+    .log-date { color: var(--text-tertiary); white-space: nowrap; }
+
+    .info-block {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .info-block p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin-top: 6px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1><i class="ti ti-clipboard-check" aria-hidden="true"></i> Case Follow-Up Tracker</h1>
+
+  <div class="today-banner">
+    <div class="date-label" id="today-date"></div>
+    <div class="follow-count" id="follow-count">—</div>
+    <div class="follow-sub" id="follow-sub"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'cases')">Cases</button>
+    <button class="tab-btn" onclick="switchTab(this,'log')">History</button>
+    <button class="tab-btn" onclick="switchTab(this,'settings')">Settings</button>
+  </div>
+
+  <div id="tab-cases" class="panel active">
+    <div class="add-section">
+      <div class="section-label">Add new case</div>
+      <div class="add-row">
+        <input type="text" id="new-case-id" placeholder="e.g. C-014 or Row 14" maxlength="20" />
+        <button class="action primary" onclick="addCase()"><i class="ti ti-plus" aria-hidden="true"></i> Add</button>
+      </div>
+      <div class="add-hint">Use the row number from your Excel sheet. No names needed.</div>
+    </div>
+
+    <div id="due-section" style="display:none; margin-bottom:1.25rem;">
+      <div class="section-label">Follow up today</div>
+      <div class="case-list" id="due-list"></div>
+    </div>
+
+    <div>
+      <div class="section-label">All active cases</div>
+      <div class="case-list" id="all-list"></div>
+    </div>
+  </div>
+
+  <div id="tab-log" class="panel">
+    <div class="section-label">Follow-up history</div>
+    <div id="log-list" style="margin-top:8px;"></div>
+  </div>
+
+  <div id="tab-settings" class="panel">
+    <div class="info-block">
+      <div class="section-label">Follow-up rules</div>
+      <p>Each case is followed up every <strong>14 days</strong>.<br>
+      After <strong>3 follow-ups</strong>, the case is ready to close.<br>
+      Overdue cases show in red. Today's cases show in yellow.</p>
+    </div>
+    <div class="info-block">
+      <div class="section-label">Privacy</div>
+      <p>All data is stored only on this device.<br>No names are ever collected or transmitted.</p>
+    </div>
+    <div class="info-block">
+      <div class="section-label">Reset</div>
+      <p style="margin-bottom:10px;">Permanently remove all cases from this device.</p>
+      <button class="action danger" onclick="clearAll()"><i class="ti ti-trash" aria-hidden="true"></i> Clear all cases</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'casetracker_v1';
+  const LOG_KEY = 'casetracker_log_v1';
+  const FOLLOW_INTERVAL = 14;
+  const MAX_FOLLOWUPS = 3;
+
+  let cases = [], log = [];
+
+  function load() {
+    try { cases = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { cases = []; }
+    try { log = JSON.parse(localStorage.getItem(LOG_KEY)) || []; } catch(e) { log = []; }
+  }
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+    localStorage.setItem(LOG_KEY, JSON.stringify(log));
+  }
+
+  function today() { return new Date().toISOString().split('T')[0]; }
+
+  function addDays(dateStr, n) {
+    const d = new Date(dateStr + 'T12:00:00');
+    d.setDate(d.getDate() + n);
+    return d.toISOString().split('T')[0];
+  }
+
+  function daysDiff(a, b) {
+    return Math.round((new Date(b+'T12:00:00') - new Date(a+'T12:00:00')) / 86400000);
+  }
+
+  function formatDate(dateStr) {
+    return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-CA', { month:'short', day:'numeric' });
+  }
+
+  function getNextDue(c) {
+    return c.lastFollowUp ? addDays(c.lastFollowUp, FOLLOW_INTERVAL) : c.added;
+  }
+
+  function getStatus(c) {
+    if (c.followUpCount >= MAX_FOLLOWUPS) return 'closeable';
+    const t = today(), nd = getNextDue(c);
+    if (nd < t) return 'overdue';
+    if (nd === t) return 'due-today';
+    return 'ok';
+  }
+
+  function addCase() {
+    const input = document.getElementById('new-case-id');
+    const raw = input.value.trim();
+    if (!raw) return;
+    const id = raw.toUpperCase().replace(/\s+/g, '-');
+    if (cases.find(c => c.id === id)) { alert('Case ' + id + ' already exists.'); return; }
+    cases.push({ id, added: today(), lastFollowUp: null, followUpCount: 0 });
+    save(); input.value = ''; render();
+  }
+
+  function followUp(id) {
+    const c = cases.find(x => x.id === id);
+    if (!c) return;
+    c.lastFollowUp = today();
+    c.followUpCount++;
+    log.unshift({ id, date: today(), count: c.followUpCount });
+    save(); render();
+  }
+
+  function closeCase(id) {
+    if (!confirm('Mark ' + id + ' as closed and remove from tracker?')) return;
+    const c = cases.find(x => x.id === id);
+    if (c) log.unshift({ id, date: today(), count: c.followUpCount, closed: true });
+    cases = cases.filter(x => x.id !== id);
+    save(); render();
+  }
+
+  function removeCase(id) {
+    if (!confirm('Remove case ' + id + '?')) return;
+    cases = cases.filter(x => x.id !== id);
+    save(); render();
+  }
+
+  function clearAll() {
+    if (!confirm('Remove all cases? This cannot be undone.')) return;
+    cases = []; save(); render();
+  }
+
+  function makeCard(c) {
+    const status = getStatus(c);
+    const nd = getNextDue(c);
+    const t = today();
+
+    const card = document.createElement('div');
+    card.className = 'case-card ' + status;
+
+    const idEl = document.createElement('div');
+    idEl.className = 'case-id';
+    idEl.textContent = c.id;
+
+    const meta = document.createElement('div');
+    meta.className = 'case-meta';
+
+    const nextEl = document.createElement('div');
+    nextEl.className = 'case-next';
+    if (status === 'closeable') nextEl.textContent = 'Ready to close';
+    else if (status === 'overdue') nextEl.textContent = 'Overdue since ' + formatDate(nd) + ' (' + daysDiff(nd, t) + 'd ago)';
+    else if (status === 'due-today') nextEl.textContent = 'Due today';
+    else nextEl.textContent = 'Next follow-up: ' + formatDate(nd);
+
+    const countEl = document.createElement('div');
+    countEl.className = 'case-count';
+    countEl.textContent = c.followUpCount + '/' + MAX_FOLLOWUPS + ' follow-ups done';
+
+    meta.appendChild(nextEl);
+    meta.appendChild(countEl);
+
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+    if (status === 'closeable') { badge.className += ' badge-close'; badge.textContent = 'Close'; }
+    else if (status === 'overdue') { badge.className += ' badge-overdue'; badge.textContent = 'Overdue'; }
+    else if (status === 'due-today') { badge.className += ' badge-today'; badge.textContent = 'Due today'; }
+    else { badge.className += ' badge-ok'; badge.textContent = 'On track'; }
+
+    const btns = document.createElement('div');
+    btns.className = 'btn-row';
+
+    if (status === 'closeable') {
+      const b = document.createElement('button');
+      b.className = 'action success';
+      b.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Close case';
+      b.onclick = () => closeCase(c.id);
+      btns.appendChild(b);
+    } else {
+      const b = document.createElement('button');
+      b.className = 'action primary';
+      b.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Done today';
+      b.onclick = () => followUp(c.id);
+      btns.appendChild(b);
+    }
+
+    const del = document.createElement('button');
+    del.className = 'action danger';
+    del.innerHTML = '<i class="ti ti-trash" aria-hidden="true"></i>';
+    del.title = 'Remove case';
+    del.onclick = () => removeCase(c.id);
+    btns.appendChild(del);
+
+    card.appendChild(idEl);
+    card.appendChild(meta);
+    card.appendChild(badge);
+    card.appendChild(btns);
+    return card;
+  }
+
+  function render() {
+    const t = today();
+    document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-CA', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+    const due = cases.filter(c => { const s = getStatus(c); return s === 'due-today' || s === 'overdue'; });
+
+    document.getElementById('follow-count').textContent = due.length === 0
+      ? 'No follow-ups today'
+      : due.length + ' follow-up' + (due.length !== 1 ? 's' : '') + ' due';
+    document.getElementById('follow-sub').textContent = due.length > 0
+      ? due.map(c => c.id).join(', ')
+      : cases.length > 0 ? 'All cases are on track.' : 'Add cases below to get started.';
+
+    const dueSection = document.getElementById('due-section');
+    const dueList = document.getElementById('due-list');
+    dueList.innerHTML = '';
+    if (due.length > 0) {
+      dueSection.style.display = '';
+      due.forEach(c => dueList.appendChild(makeCard(c)));
+    } else {
+      dueSection.style.display = 'none';
+    }
+
+    const allList = document.getElementById('all-list');
+    allList.innerHTML = '';
+    if (cases.length === 0) {
+      allList.innerHTML = '<div class="empty-state">No cases added yet.<br>Add a case using the row number from your Excel sheet.</div>';
+    } else {
+      const order = { overdue:0, 'due-today':1, closeable:2, ok:3 };
+      [...cases].sort((a,b) => (order[getStatus(a)]||3) - (order[getStatus(b)]||3)).forEach(c => allList.appendChild(makeCard(c)));
+    }
+
+    const logList = document.getElementById('log-list');
+    if (log.length === 0) {
+      logList.innerHTML = '<div class="empty-state">No follow-ups recorded yet.</div>';
+    } else {
+      logList.innerHTML = '';
+      log.slice(0, 60).forEach(entry => {
+        const el = document.createElement('div');
+        el.className = 'log-entry';
+        const label = entry.closed ? entry.id + ' — case closed' : entry.id + ' — follow-up #' + entry.count;
+        el.innerHTML = '<span>' + label + '</span><span class="log-date">' + formatDate(entry.date) + '</span>';
+        logList.appendChild(el);
+      });
+    }
+  }
+
+  function switchTab(btn, name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  document.getElementById('new-case-id').addEventListener('keydown', e => { if (e.key === 'Enter') addCase(); });
+
+  load();
+  render();
+</script>
+</body>
+</html>
