@@ -98,28 +98,27 @@
     .section-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
 
     .add-section {
-      background: var(--bg-secondary);
+      background: var(--bg);
       border: 0.5px solid var(--border);
       border-radius: var(--radius-md);
       padding: 1rem;
       margin-bottom: 1.25rem;
     }
-    .add-row { display: flex; gap: 8px; margin-top: 8px; }
-    .add-row input {
-      flex: 1;
-      font-size: 14px;
-      padding: 6px 10px;
+    .add-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .add-grid label { font-size: 12px; color: var(--text-tertiary); display: block; margin-bottom: 3px; }
+    .add-grid input, .add-grid select {
+      width: 100%; font-size: 14px; padding: 6px 8px;
       border: 0.5px solid var(--border-secondary);
       border-radius: var(--radius-md);
-      background: var(--bg);
+      background: var(--bg-secondary);
       color: var(--text);
       outline: none;
     }
-    .add-row input:focus { border-color: var(--border-info); }
-    .add-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
+    .add-grid input:focus, .add-grid select:focus { border-color: var(--border-info); }
+    .add-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+    .add-hint { font-size: 11px; color: var(--text-tertiary); }
 
     .case-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
-
     .case-card {
       background: var(--bg);
       border: 0.5px solid var(--border);
@@ -145,41 +144,28 @@
     .badge-ok { background: var(--bg-secondary); color: var(--text-tertiary); border: 0.5px solid var(--border); }
 
     .btn-row { display: flex; gap: 6px; }
-
     button.action {
-      font-size: 12px;
-      padding: 4px 10px;
+      font-size: 12px; padding: 4px 10px;
       border-radius: var(--radius-md);
       border: 0.5px solid var(--border-secondary);
-      background: var(--bg);
-      color: var(--text);
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      background: var(--bg); color: var(--text);
+      cursor: pointer; white-space: nowrap;
+      display: flex; align-items: center; gap: 4px;
     }
     button.action:hover { background: var(--bg-secondary); }
     button.action.primary { color: var(--text-info); border-color: var(--border-info); }
     button.action.primary:hover { background: var(--bg-info); }
-    button.action.danger { color: var(--text-danger); border-color: var(--border-danger); }
-    button.action.danger:hover { background: var(--bg-danger); }
     button.action.success { color: var(--text-success); border-color: var(--border-success); }
     button.action.success:hover { background: var(--bg-success); }
+    button.action.danger { color: var(--text-danger); border-color: var(--border-danger); }
+    button.action.danger:hover { background: var(--bg-danger); }
 
     .empty-state { text-align: center; padding: 2rem; color: var(--text-tertiary); font-size: 14px; line-height: 1.6; }
 
     .log-entry { font-size: 13px; color: var(--text-secondary); padding: 7px 0; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; gap: 8px; }
     .log-entry:last-child { border-bottom: none; }
-    .log-date { color: var(--text-tertiary); white-space: nowrap; }
 
-    .info-block {
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 1rem 1.25rem;
-      margin-bottom: 1rem;
-    }
+    .info-block { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1rem; }
     .info-block p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin-top: 6px; }
   </style>
 </head>
@@ -199,14 +185,28 @@
     <button class="tab-btn" onclick="switchTab(this,'settings')">Settings</button>
   </div>
 
+  <!-- Cases tab -->
   <div id="tab-cases" class="panel active">
     <div class="add-section">
       <div class="section-label">Add new case</div>
-      <div class="add-row">
-        <input type="text" id="new-case-id" placeholder="e.g. C-014 or Row 14" maxlength="20" />
-        <button class="action primary" onclick="addCase()"><i class="ti ti-plus" aria-hidden="true"></i> Add</button>
+      <div class="add-grid">
+        <div>
+          <label for="new-due-date">Next follow-up date</label>
+          <input type="date" id="new-due-date" />
+        </div>
+        <div>
+          <label for="new-followup-num">Which follow-up is this?</label>
+          <select id="new-followup-num">
+            <option value="0">1st follow-up coming up</option>
+            <option value="1">2nd follow-up coming up</option>
+            <option value="2">3rd follow-up coming up</option>
+          </select>
+        </div>
       </div>
-      <div class="add-hint">Use the row number from your Excel sheet. No names needed.</div>
+      <div class="add-footer">
+        <div class="add-hint">Case number assigned automatically.</div>
+        <button class="action primary" onclick="addCase()"><i class="ti ti-plus" aria-hidden="true"></i> Add case</button>
+      </div>
     </div>
 
     <div id="due-section" style="display:none; margin-bottom:1.25rem;">
@@ -220,11 +220,13 @@
     </div>
   </div>
 
+  <!-- History tab -->
   <div id="tab-log" class="panel">
     <div class="section-label">Follow-up history</div>
     <div id="log-list" style="margin-top:8px;"></div>
   </div>
 
+  <!-- Settings tab -->
   <div id="tab-settings" class="panel">
     <div class="info-block">
       <div class="section-label">Follow-up rules</div>
@@ -245,8 +247,8 @@
 </div>
 
 <script>
-  const STORAGE_KEY = 'casetracker_v1';
-  const LOG_KEY = 'casetracker_log_v1';
+  const STORAGE_KEY = 'casetracker_v2';
+  const LOG_KEY = 'casetracker_log_v2';
   const FOLLOW_INTERVAL = 14;
   const MAX_FOLLOWUPS = 3;
 
@@ -278,33 +280,50 @@
     return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-CA', { month:'short', day:'numeric' });
   }
 
-  function getNextDue(c) {
-    return c.lastFollowUp ? addDays(c.lastFollowUp, FOLLOW_INTERVAL) : c.added;
+  function nextCaseNumber() {
+    let max = 0;
+    cases.forEach(c => {
+      const n = parseInt(c.id.replace('C-', ''), 10);
+      if (!isNaN(n) && n > max) max = n;
+    });
+    log.forEach(e => {
+      const n = parseInt((e.id || '').replace('C-', ''), 10);
+      if (!isNaN(n) && n > max) max = n;
+    });
+    return 'C-' + String(max + 1).padStart(3, '0');
   }
 
   function getStatus(c) {
     if (c.followUpCount >= MAX_FOLLOWUPS) return 'closeable';
-    const t = today(), nd = getNextDue(c);
+    const t = today(), nd = c.nextDue;
     if (nd < t) return 'overdue';
     if (nd === t) return 'due-today';
     return 'ok';
   }
 
+  function ordinal(n) {
+    return ['1st','2nd','3rd'][n - 1] || n + 'th';
+  }
+
   function addCase() {
-    const input = document.getElementById('new-case-id');
-    const raw = input.value.trim();
-    if (!raw) return;
-    const id = raw.toUpperCase().replace(/\s+/g, '-');
-    if (cases.find(c => c.id === id)) { alert('Case ' + id + ' already exists.'); return; }
-    cases.push({ id, added: today(), lastFollowUp: null, followUpCount: 0 });
-    save(); input.value = ''; render();
+    const dueDateInput = document.getElementById('new-due-date');
+    const followupNum = parseInt(document.getElementById('new-followup-num').value, 10);
+    const dueDate = dueDateInput.value;
+    if (!dueDate) { alert('Please select the next follow-up date.'); return; }
+    const id = nextCaseNumber();
+    cases.push({ id, added: today(), nextDue: dueDate, followUpCount: followupNum, lastFollowUp: null });
+    save();
+    dueDateInput.value = '';
+    document.getElementById('new-followup-num').value = '0';
+    render();
   }
 
   function followUp(id) {
     const c = cases.find(x => x.id === id);
     if (!c) return;
-    c.lastFollowUp = today();
     c.followUpCount++;
+    c.lastFollowUp = today();
+    c.nextDue = addDays(today(), FOLLOW_INTERVAL);
     log.unshift({ id, date: today(), count: c.followUpCount });
     save(); render();
   }
@@ -330,8 +349,9 @@
 
   function makeCard(c) {
     const status = getStatus(c);
-    const nd = getNextDue(c);
+    const nd = c.nextDue;
     const t = today();
+    const upcomingNum = c.followUpCount + 1;
 
     const card = document.createElement('div');
     card.className = 'case-card ' + status;
@@ -352,7 +372,9 @@
 
     const countEl = document.createElement('div');
     countEl.className = 'case-count';
-    countEl.textContent = c.followUpCount + '/' + MAX_FOLLOWUPS + ' follow-ups done';
+    countEl.textContent = status === 'closeable'
+      ? 'All 3 follow-ups complete'
+      : ordinal(upcomingNum) + ' follow-up · ' + c.followUpCount + '/' + MAX_FOLLOWUPS + ' done';
 
     meta.appendChild(nextEl);
     meta.appendChild(countEl);
@@ -370,13 +392,13 @@
     if (status === 'closeable') {
       const b = document.createElement('button');
       b.className = 'action success';
-      b.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Close case';
+      b.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Close';
       b.onclick = () => closeCase(c.id);
       btns.appendChild(b);
     } else {
       const b = document.createElement('button');
       b.className = 'action primary';
-      b.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Done today';
+      b.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Done';
       b.onclick = () => followUp(c.id);
       btns.appendChild(b);
     }
@@ -396,7 +418,6 @@
   }
 
   function render() {
-    const t = today();
     document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-CA', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
     const due = cases.filter(c => { const s = getStatus(c); return s === 'due-today' || s === 'overdue'; });
@@ -421,7 +442,7 @@
     const allList = document.getElementById('all-list');
     allList.innerHTML = '';
     if (cases.length === 0) {
-      allList.innerHTML = '<div class="empty-state">No cases added yet.<br>Add a case using the row number from your Excel sheet.</div>';
+      allList.innerHTML = '<div class="empty-state">No cases yet.<br>Fill in the date and follow-up number above to add your first case.</div>';
     } else {
       const order = { overdue:0, 'due-today':1, closeable:2, ok:3 };
       [...cases].sort((a,b) => (order[getStatus(a)]||3) - (order[getStatus(b)]||3)).forEach(c => allList.appendChild(makeCard(c)));
@@ -436,7 +457,7 @@
         const el = document.createElement('div');
         el.className = 'log-entry';
         const label = entry.closed ? entry.id + ' — case closed' : entry.id + ' — follow-up #' + entry.count;
-        el.innerHTML = '<span>' + label + '</span><span class="log-date">' + formatDate(entry.date) + '</span>';
+        el.innerHTML = '<span>' + label + '</span><span style="color:var(--text-tertiary)">' + formatDate(entry.date) + '</span>';
         logList.appendChild(el);
       });
     }
@@ -448,8 +469,6 @@
     document.getElementById('tab-' + name).classList.add('active');
     btn.classList.add('active');
   }
-
-  document.getElementById('new-case-id').addEventListener('keydown', e => { if (e.key === 'Enter') addCase(); });
 
   load();
   render();
