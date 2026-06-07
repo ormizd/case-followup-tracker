@@ -4,202 +4,298 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Case Follow-Up Tracker</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #ffffff;
-      --bg-secondary: #f5f5f3;
-      --bg-warning: #fefce8;
-      --bg-danger: #fef2f2;
-      --bg-success: #f0fdf4;
-      --bg-info: #eff6ff;
-      --text: #1a1a1a;
-      --text-secondary: #555550;
-      --text-tertiary: #888780;
-      --text-warning: #854f0b;
-      --text-danger: #a32d2d;
-      --text-success: #3b6d11;
-      --text-info: #185fa5;
-      --border: rgba(0,0,0,0.12);
-      --border-secondary: rgba(0,0,0,0.22);
-      --border-warning: #ba7517;
-      --border-danger: #e24b4a;
-      --border-success: #639922;
-      --border-info: #378add;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #1c1c1a;
-        --bg-secondary: #252523;
-        --bg-warning: #2a1f00;
-        --bg-danger: #2a0f0f;
-        --bg-success: #0f2a0f;
-        --bg-info: #0a1f35;
-        --text: #f0ede8;
-        --text-secondary: #b4b2a9;
-        --text-tertiary: #888780;
-        --text-warning: #fac775;
-        --text-danger: #f09595;
-        --text-success: #97c459;
-        --text-info: #85b7eb;
-        --border: rgba(255,255,255,0.1);
-        --border-secondary: rgba(255,255,255,0.2);
-        --border-warning: #ba7517;
-        --border-danger: #a32d2d;
-        --border-success: #3b6d11;
-        --border-info: #185fa5;
-      }
+      --teal: #1a7f74;
+      --teal-light: #e6f5f3;
+      --teal-mid: #c2e6e2;
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --amber-mid: #fde68a;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --slate: #1e293b;
+      --bg: #f8f6f1;
+      --card: #ffffff;
+      --border: #e2ddd6;
+      --text: #1e293b;
+      --text-soft: #64748b;
+      --text-muted: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg-secondary);
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 1.5rem 1rem;
+      padding: 0;
     }
 
-    .container { max-width: 600px; margin: 0 auto; }
-
-    h1 {
-      font-size: 18px;
+    .app-header {
+      background: var(--slate);
+      padding: 1.25rem 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .app-header h1 {
+      font-size: 15px;
       font-weight: 500;
-      color: var(--text);
-      margin-bottom: 1.25rem;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.02em;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
-    .today-banner {
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1rem 1.25rem;
-      margin-bottom: 1.25rem;
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      display: inline-block;
+      box-shadow: 0 0 0 3px rgba(26,127,116,0.3);
+      flex-shrink: 0;
     }
-    .date-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-    .follow-count { font-size: 26px; font-weight: 500; color: var(--text); }
-    .follow-sub { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
 
-    .tabs { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 1.25rem; }
-    .tab-btn { background: none; border: none; padding: 0.5rem 1rem; font-size: 14px; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
-    .tab-btn.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
-    .tab-btn:hover:not(.active) { color: var(--text); }
+    .tabs {
+      display: flex;
+      margin-top: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .tab-btn {
+      background: none; border: none;
+      padding: 0.5rem 1rem 0.65rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 400;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      letter-spacing: 0.01em;
+      transition: color 0.15s;
+    }
+    .tab-btn.active { color: #fff; border-bottom-color: var(--teal); font-weight: 500; }
+    .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.7); }
+
+    .content { padding: 1.25rem 1.25rem 3rem; max-width: 600px; margin: 0 auto; }
 
     .panel { display: none; }
     .panel.active { display: block; }
 
-    .section-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-
-    .add-section {
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 1rem;
+    /* Banner */
+    .banner {
+      background: var(--slate);
+      border-radius: 16px;
+      padding: 1.5rem;
       margin-bottom: 1.25rem;
+      margin-top: 1rem;
+      position: relative;
+      overflow: hidden;
     }
-    .add-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; align-items: end; }
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(26,127,116,0.15);
+    }
+    .banner::after {
+      content: '';
+      position: absolute;
+      bottom: -20px; right: 20px;
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: rgba(26,127,116,0.08);
+    }
+    .banner-date { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+    .banner-count { font-size: 30px; font-weight: 600; color: #fff; line-height: 1.1; }
+    .banner-count.none { color: rgba(255,255,255,0.6); font-weight: 300; font-size: 22px; }
+    .banner-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; font-family: 'DM Mono', monospace; }
+    .banner-sub.ids { color: var(--teal-mid); }
+
+    /* Add card */
+    .add-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .card-label {
+      font-size: 10px; font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+    }
+    .add-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     @media (max-width: 420px) { .add-grid { grid-template-columns: 1fr; } }
-    .add-grid label { font-size: 12px; color: var(--text-tertiary); display: block; margin-bottom: 3px; }
-    .add-grid input, .add-grid select {
-      width: 100%; font-size: 14px; padding: 7px 8px;
-      border: 0.5px solid var(--border-secondary);
-      border-radius: var(--radius-md);
-      background: var(--bg-secondary);
+
+    .field label {
+      font-size: 11px; font-weight: 500;
+      color: var(--text-soft);
+      display: block; margin-bottom: 4px;
+      letter-spacing: 0.02em;
+    }
+    .field input, .field select {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: var(--bg);
       color: var(--text);
       outline: none;
-      height: 36px;
+      height: 38px;
+      transition: border-color 0.15s;
       -webkit-appearance: none;
       appearance: none;
     }
-    .add-grid select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 28px; }
-    .add-grid input:focus, .add-grid select:focus { border-color: var(--border-info); }
-    .add-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-    .add-hint { font-size: 11px; color: var(--text-tertiary); }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 30px;
+    }
+    .field input:focus, .field select:focus { border-color: var(--teal); }
 
-    .case-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+    .add-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .add-hint { font-size: 11px; color: var(--text-muted); }
+
+    /* Buttons */
+    .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 9px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-primary:hover { background: #166b61; }
+    .btn-success { background: var(--green-light); color: var(--green); border: 1px solid #bbf7d0; }
+    .btn-success:hover { background: #bbf7d0; }
+    .btn-done { background: var(--teal-light); color: var(--teal); border: 1px solid var(--teal-mid); }
+    .btn-done:hover { background: var(--teal-mid); }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); font-size: 14px; padding: 6px 10px; }
+    .btn-ghost:hover { background: var(--red-light); color: var(--red); border-color: #fca5a5; }
+    .btn-danger { background: var(--red-light); color: var(--red); border: 1px solid #fca5a5; }
+    .btn-danger:hover { background: #fca5a5; }
+
+    /* Section heading */
+    .section-heading {
+      font-size: 10px; font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+      margin-top: 1.25rem;
+      padding-left: 2px;
+    }
+
+    /* Case cards */
+    .case-list { display: flex; flex-direction: column; gap: 8px; }
+
     .case-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 0.9rem 1.1rem;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      transition: box-shadow 0.15s;
+    }
+    .case-card:hover { box-shadow: var(--shadow-md); }
+    .case-card.overdue { border-left: 3px solid var(--red); background: #fffafa; }
+    .case-card.due-today { border-left: 3px solid var(--amber); background: #fffdf7; }
+    .case-card.closeable { border-left: 3px solid var(--green); background: #fafffc; }
+
+    .case-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px; font-weight: 500;
+      color: var(--text-soft);
+      min-width: 52px;
       background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 0.75rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      border-radius: 7px;
+      padding: 4px 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
     }
-    .case-card.due-today { border-color: var(--border-warning); background: var(--bg-warning); }
-    .case-card.overdue { border-color: var(--border-danger); background: var(--bg-danger); }
-    .case-card.closeable { border-color: var(--border-success); background: var(--bg-success); }
+    .case-card.overdue .case-num { background: var(--red-light); color: var(--red); border-color: #fca5a5; }
+    .case-card.due-today .case-num { background: var(--amber-light); color: var(--amber); border-color: var(--amber-mid); }
+    .case-card.closeable .case-num { background: var(--green-light); color: var(--green); border-color: #bbf7d0; }
 
-    .case-id { font-size: 15px; font-weight: 500; min-width: 56px; color: var(--text); }
-    .case-meta { flex: 1; }
-    .case-next { font-size: 13px; color: var(--text-secondary); }
-    .case-count { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+    .case-meta { flex: 1; min-width: 0; }
+    .case-next { font-size: 13px; font-weight: 500; color: var(--text); }
+    .case-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-    .badge { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-md); font-weight: 500; white-space: nowrap; }
-    .badge-today { background: var(--bg-warning); color: var(--text-warning); border: 0.5px solid var(--border-warning); }
-    .badge-overdue { background: var(--bg-danger); color: var(--text-danger); border: 0.5px solid var(--border-danger); }
-    .badge-close { background: var(--bg-success); color: var(--text-success); border: 0.5px solid var(--border-success); }
-    .badge-ok { background: var(--bg-secondary); color: var(--text-tertiary); border: 0.5px solid var(--border); }
+    .pip-row { display: flex; gap: 4px; margin-top: 6px; }
+    .pip { width: 24px; height: 4px; border-radius: 3px; background: var(--border); }
+    .pip.done { background: var(--teal); }
+    .pip.done-red { background: var(--red); }
+    .pip.done-amber { background: var(--amber); }
+    .pip.done-green { background: var(--green); }
 
-    .btn-row { display: flex; gap: 6px; }
-    button.action {
-      font-size: 12px; padding: 4px 10px;
-      border-radius: var(--radius-md);
-      border: 0.5px solid var(--border-secondary);
-      background: var(--bg); color: var(--text);
-      cursor: pointer; white-space: nowrap;
-      display: flex; align-items: center; gap: 4px;
-    }
-    button.action:hover { background: var(--bg-secondary); }
-    button.action.primary { color: var(--text-info); border-color: var(--border-info); }
-    button.action.primary:hover { background: var(--bg-info); }
-    button.action.success { color: var(--text-success); border-color: var(--border-success); }
-    button.action.success:hover { background: var(--bg-success); }
-    button.action.danger { color: var(--text-danger); border-color: var(--border-danger); }
-    button.action.danger:hover { background: var(--bg-danger); }
+    .btn-row { display: flex; gap: 6px; flex-shrink: 0; }
 
-    .empty-state { text-align: center; padding: 2rem; color: var(--text-tertiary); font-size: 14px; line-height: 1.6; }
+    /* Log */
+    .log-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); gap: 8px; }
+    .log-item:last-child { border-bottom: none; }
+    .log-left { display: flex; align-items: center; gap: 8px; }
+    .log-id { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--teal); background: var(--teal-light); padding: 2px 7px; border-radius: 5px; white-space: nowrap; }
+    .log-label { font-size: 13px; color: var(--text-soft); }
+    .log-date { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
 
-    .log-entry { font-size: 13px; color: var(--text-secondary); padding: 7px 0; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; gap: 8px; }
-    .log-entry:last-child { border-bottom: none; }
+    /* Info blocks */
+    .info-card { background: var(--card); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 10px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+    .info-card p { font-size: 13px; color: var(--text-soft); line-height: 1.8; margin-top: 6px; }
 
-    .info-block { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1rem; }
-    .info-block p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin-top: 6px; }
+    .empty { text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); font-size: 14px; line-height: 1.7; }
+    .empty-icon { font-size: 32px; margin-bottom: 8px; }
   </style>
 </head>
 <body>
-<div class="container">
-  <h1><i class="ti ti-clipboard-check" aria-hidden="true"></i> Case Follow-Up Tracker</h1>
 
-  <div class="today-banner">
-    <div class="date-label" id="today-date"></div>
-    <div class="follow-count" id="follow-count">—</div>
-    <div class="follow-sub" id="follow-sub"></div>
-  </div>
-
+<div class="app-header">
+  <h1><span class="dot"></span> Case Follow-Up Tracker</h1>
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab(this,'cases')">Cases</button>
     <button class="tab-btn" onclick="switchTab(this,'log')">History</button>
     <button class="tab-btn" onclick="switchTab(this,'settings')">Settings</button>
   </div>
+</div>
 
-  <!-- Cases tab -->
+<div class="content">
+
+  <!-- Cases -->
   <div id="tab-cases" class="panel active">
-    <div class="add-section">
-      <div class="section-label">Add new case</div>
+    <div class="banner">
+      <div class="banner-date" id="today-date"></div>
+      <div class="banner-count" id="follow-count">—</div>
+      <div class="banner-sub" id="follow-sub"></div>
+    </div>
+
+    <div class="add-card">
+      <div class="card-label">Add new case</div>
       <div class="add-grid">
-        <div>
+        <div class="field">
           <label for="new-due-date">Next follow-up date</label>
           <input type="date" id="new-due-date" />
         </div>
-        <div>
+        <div class="field">
           <label for="new-followup-num">Which follow-up is this?</label>
           <select id="new-followup-num">
             <option value="0">1st follow-up coming up</option>
@@ -209,46 +305,49 @@
         </div>
       </div>
       <div class="add-footer">
-        <div class="add-hint">Case number assigned automatically.</div>
-        <button class="action primary" onclick="addCase()"><i class="ti ti-plus" aria-hidden="true"></i> Add case</button>
+        <span class="add-hint">Number assigned automatically</span>
+        <button class="btn btn-primary" onclick="addCase()">+ Add case</button>
       </div>
     </div>
 
-    <div id="due-section" style="display:none; margin-bottom:1.25rem;">
-      <div class="section-label">Follow up today</div>
+    <div id="due-section" style="display:none;">
+      <div class="section-heading">Follow up today</div>
       <div class="case-list" id="due-list"></div>
     </div>
 
     <div>
-      <div class="section-label">All active cases</div>
+      <div class="section-heading">All active cases</div>
       <div class="case-list" id="all-list"></div>
     </div>
   </div>
 
-  <!-- History tab -->
+  <!-- History -->
   <div id="tab-log" class="panel">
-    <div class="section-label">Follow-up history</div>
-    <div id="log-list" style="margin-top:8px;"></div>
+    <div class="section-heading" style="margin-top:1rem;">Follow-up history</div>
+    <div class="add-card" style="margin-top:8px; padding: 0 1.25rem;">
+      <div id="log-list"></div>
+    </div>
   </div>
 
-  <!-- Settings tab -->
+  <!-- Settings -->
   <div id="tab-settings" class="panel">
-    <div class="info-block">
-      <div class="section-label">Follow-up rules</div>
+    <div class="section-heading" style="margin-top:1rem;">Follow-up rules</div>
+    <div class="info-card">
       <p>Each case is followed up every <strong>14 days</strong>.<br>
       After <strong>3 follow-ups</strong>, the case is ready to close.<br>
-      Overdue cases show in red. Today's cases show in yellow.</p>
+      Overdue cases show with a red indicator. Today's cases show in amber.</p>
     </div>
-    <div class="info-block">
-      <div class="section-label">Privacy</div>
+    <div class="section-heading">Privacy</div>
+    <div class="info-card">
       <p>All data is stored only on this device.<br>No names are ever collected or transmitted.</p>
     </div>
-    <div class="info-block">
-      <div class="section-label">Reset</div>
+    <div class="section-heading">Reset</div>
+    <div class="info-card">
       <p style="margin-bottom:10px;">Permanently remove all cases from this device.</p>
-      <button class="action danger" onclick="clearAll()"><i class="ti ti-trash" aria-hidden="true"></i> Clear all cases</button>
+      <button class="btn btn-danger" onclick="clearAll()">Clear all cases</button>
     </div>
   </div>
+
 </div>
 
 <script>
@@ -256,46 +355,29 @@
   const LOG_KEY = 'casetracker_log_v2';
   const FOLLOW_INTERVAL = 14;
   const MAX_FOLLOWUPS = 3;
-
   let cases = [], log = [];
 
   function load() {
     try { cases = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { cases = []; }
     try { log = JSON.parse(localStorage.getItem(LOG_KEY)) || []; } catch(e) { log = []; }
   }
-
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
     localStorage.setItem(LOG_KEY, JSON.stringify(log));
   }
-
   function today() { return new Date().toISOString().split('T')[0]; }
-
-  function addDays(dateStr, n) {
-    const d = new Date(dateStr + 'T12:00:00');
-    d.setDate(d.getDate() + n);
-    return d.toISOString().split('T')[0];
-  }
-
-  function daysDiff(a, b) {
-    return Math.round((new Date(b+'T12:00:00') - new Date(a+'T12:00:00')) / 86400000);
-  }
-
-  function formatDate(dateStr) {
-    return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-CA', { month:'short', day:'numeric' });
-  }
+  function addDays(d, n) { const x = new Date(d+'T12:00:00'); x.setDate(x.getDate()+n); return x.toISOString().split('T')[0]; }
+  function daysDiff(a, b) { return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000); }
+  function formatDate(d) { return new Date(d+'T12:00:00').toLocaleDateString('en-CA',{month:'short',day:'numeric'}); }
+  function ordinal(n) { return ['1st','2nd','3rd'][n-1]||n+'th'; }
 
   function nextCaseNumber() {
     let max = 0;
-    cases.forEach(c => {
-      const n = parseInt(c.id.replace('C-', ''), 10);
+    [...cases, ...log].forEach(c => {
+      const n = parseInt((c.id||'').replace('C-',''), 10);
       if (!isNaN(n) && n > max) max = n;
     });
-    log.forEach(e => {
-      const n = parseInt((e.id || '').replace('C-', ''), 10);
-      if (!isNaN(n) && n > max) max = n;
-    });
-    return 'C-' + String(max + 1).padStart(3, '0');
+    return 'C-' + String(max+1).padStart(3,'0');
   }
 
   function getStatus(c) {
@@ -306,29 +388,17 @@
     return 'ok';
   }
 
-  function ordinal(n) {
-    return ['1st','2nd','3rd'][n - 1] || n + 'th';
-  }
-
   function addCase() {
-    const dueDateInput = document.getElementById('new-due-date');
-    const followupNum = parseInt(document.getElementById('new-followup-num').value, 10);
-    const dueDate = dueDateInput.value;
-    if (!dueDate) { alert('Please select the next follow-up date.'); return; }
-    const id = nextCaseNumber();
-    cases.push({ id, added: today(), nextDue: dueDate, followUpCount: followupNum, lastFollowUp: null });
-    save();
-    dueDateInput.value = '';
-    document.getElementById('new-followup-num').value = '0';
-    render();
+    const dateEl = document.getElementById('new-due-date');
+    const numEl = document.getElementById('new-followup-num');
+    if (!dateEl.value) { alert('Please select the next follow-up date.'); return; }
+    cases.push({ id: nextCaseNumber(), added: today(), nextDue: dateEl.value, followUpCount: parseInt(numEl.value, 10), lastFollowUp: null });
+    save(); dateEl.value = ''; numEl.value = '0'; render();
   }
 
   function followUp(id) {
-    const c = cases.find(x => x.id === id);
-    if (!c) return;
-    c.followUpCount++;
-    c.lastFollowUp = today();
-    c.nextDue = addDays(today(), FOLLOW_INTERVAL);
+    const c = cases.find(x => x.id === id); if (!c) return;
+    c.followUpCount++; c.lastFollowUp = today(); c.nextDue = addDays(today(), FOLLOW_INTERVAL);
     log.unshift({ id, date: today(), count: c.followUpCount });
     save(); render();
   }
@@ -337,14 +407,12 @@
     if (!confirm('Mark ' + id + ' as closed and remove from tracker?')) return;
     const c = cases.find(x => x.id === id);
     if (c) log.unshift({ id, date: today(), count: c.followUpCount, closed: true });
-    cases = cases.filter(x => x.id !== id);
-    save(); render();
+    cases = cases.filter(x => x.id !== id); save(); render();
   }
 
   function removeCase(id) {
     if (!confirm('Remove case ' + id + '?')) return;
-    cases = cases.filter(x => x.id !== id);
-    save(); render();
+    cases = cases.filter(x => x.id !== id); save(); render();
   }
 
   function clearAll() {
@@ -352,18 +420,30 @@
     cases = []; save(); render();
   }
 
+  function makePips(count, status) {
+    const row = document.createElement('div');
+    row.className = 'pip-row';
+    const doneClass = status==='overdue' ? 'done-red' : status==='due-today' ? 'done-amber' : status==='closeable' ? 'done-green' : 'done';
+    for (let i = 0; i < MAX_FOLLOWUPS; i++) {
+      const p = document.createElement('div');
+      p.className = 'pip' + (i < count ? ' ' + doneClass : '');
+      row.appendChild(p);
+    }
+    return row;
+  }
+
   function makeCard(c) {
     const status = getStatus(c);
     const nd = c.nextDue;
     const t = today();
-    const upcomingNum = c.followUpCount + 1;
+    const upcoming = c.followUpCount + 1;
 
     const card = document.createElement('div');
     card.className = 'case-card ' + status;
 
-    const idEl = document.createElement('div');
-    idEl.className = 'case-id';
-    idEl.textContent = c.id;
+    const num = document.createElement('div');
+    num.className = 'case-num';
+    num.textContent = c.id;
 
     const meta = document.createElement('div');
     meta.className = 'case-meta';
@@ -371,54 +451,38 @@
     const nextEl = document.createElement('div');
     nextEl.className = 'case-next';
     if (status === 'closeable') nextEl.textContent = 'Ready to close';
-    else if (status === 'overdue') nextEl.textContent = 'Overdue since ' + formatDate(nd) + ' (' + daysDiff(nd, t) + 'd ago)';
-    else if (status === 'due-today') nextEl.textContent = 'Due today';
-    else nextEl.textContent = 'Next follow-up: ' + formatDate(nd);
+    else if (status === 'overdue') nextEl.textContent = 'Overdue · ' + daysDiff(nd, t) + 'd ago';
+    else if (status === 'due-today') nextEl.textContent = 'Follow up today';
+    else nextEl.textContent = 'Due ' + formatDate(nd);
 
-    const countEl = document.createElement('div');
-    countEl.className = 'case-count';
-    countEl.textContent = status === 'closeable'
+    const subEl = document.createElement('div');
+    subEl.className = 'case-sub';
+    subEl.textContent = status === 'closeable'
       ? 'All 3 follow-ups complete'
-      : ordinal(upcomingNum) + ' follow-up · ' + c.followUpCount + '/' + MAX_FOLLOWUPS + ' done';
+      : ordinal(upcoming) + ' follow-up · ' + c.followUpCount + '/3 done';
 
     meta.appendChild(nextEl);
-    meta.appendChild(countEl);
-
-    const badge = document.createElement('span');
-    badge.className = 'badge';
-    if (status === 'closeable') { badge.className += ' badge-close'; badge.textContent = 'Close'; }
-    else if (status === 'overdue') { badge.className += ' badge-overdue'; badge.textContent = 'Overdue'; }
-    else if (status === 'due-today') { badge.className += ' badge-today'; badge.textContent = 'Due today'; }
-    else { badge.className += ' badge-ok'; badge.textContent = 'On track'; }
+    meta.appendChild(subEl);
+    meta.appendChild(makePips(c.followUpCount, status));
 
     const btns = document.createElement('div');
     btns.className = 'btn-row';
 
     if (status === 'closeable') {
       const b = document.createElement('button');
-      b.className = 'action success';
-      b.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Close';
-      b.onclick = () => closeCase(c.id);
-      btns.appendChild(b);
+      b.className = 'btn btn-success'; b.textContent = 'Close';
+      b.onclick = () => closeCase(c.id); btns.appendChild(b);
     } else {
       const b = document.createElement('button');
-      b.className = 'action primary';
-      b.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Done';
-      b.onclick = () => followUp(c.id);
-      btns.appendChild(b);
+      b.className = 'btn btn-done'; b.textContent = 'Done';
+      b.onclick = () => followUp(c.id); btns.appendChild(b);
     }
 
     const del = document.createElement('button');
-    del.className = 'action danger';
-    del.innerHTML = '<i class="ti ti-trash" aria-hidden="true"></i>';
-    del.title = 'Remove case';
-    del.onclick = () => removeCase(c.id);
-    btns.appendChild(del);
+    del.className = 'btn btn-ghost'; del.innerHTML = '&#x2715;'; del.title = 'Remove';
+    del.onclick = () => removeCase(c.id); btns.appendChild(del);
 
-    card.appendChild(idEl);
-    card.appendChild(meta);
-    card.appendChild(badge);
-    card.appendChild(btns);
+    card.appendChild(num); card.appendChild(meta); card.appendChild(btns);
     return card;
   }
 
@@ -426,13 +490,20 @@
     document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-CA', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
     const due = cases.filter(c => { const s = getStatus(c); return s === 'due-today' || s === 'overdue'; });
+    const countEl = document.getElementById('follow-count');
+    const subEl = document.getElementById('follow-sub');
 
-    document.getElementById('follow-count').textContent = due.length === 0
-      ? 'No follow-ups today'
-      : due.length + ' follow-up' + (due.length !== 1 ? 's' : '') + ' due';
-    document.getElementById('follow-sub').textContent = due.length > 0
-      ? due.map(c => c.id).join(', ')
-      : cases.length > 0 ? 'All cases are on track.' : 'Add cases below to get started.';
+    if (due.length === 0) {
+      countEl.className = 'banner-count none';
+      countEl.textContent = 'No follow-ups today';
+      subEl.className = 'banner-sub';
+      subEl.textContent = cases.length > 0 ? 'All cases on track' : 'Add your first case below';
+    } else {
+      countEl.className = 'banner-count';
+      countEl.textContent = due.length + ' follow-up' + (due.length !== 1 ? 's' : '') + ' due';
+      subEl.className = 'banner-sub ids';
+      subEl.textContent = due.map(c => c.id).join(' · ');
+    }
 
     const dueSection = document.getElementById('due-section');
     const dueList = document.getElementById('due-list');
@@ -447,7 +518,7 @@
     const allList = document.getElementById('all-list');
     allList.innerHTML = '';
     if (cases.length === 0) {
-      allList.innerHTML = '<div class="empty-state">No cases yet.<br>Fill in the date and follow-up number above to add your first case.</div>';
+      allList.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>No cases yet.<br>Fill in the date and follow-up number above.</div>';
     } else {
       const order = { overdue:0, 'due-today':1, closeable:2, ok:3 };
       [...cases].sort((a,b) => (order[getStatus(a)]||3) - (order[getStatus(b)]||3)).forEach(c => allList.appendChild(makeCard(c)));
@@ -455,15 +526,17 @@
 
     const logList = document.getElementById('log-list');
     if (log.length === 0) {
-      logList.innerHTML = '<div class="empty-state">No follow-ups recorded yet.</div>';
+      logList.innerHTML = '<div class="empty"><div class="empty-icon">🕐</div>No follow-ups recorded yet.</div>';
     } else {
       logList.innerHTML = '';
-      log.slice(0, 60).forEach(entry => {
-        const el = document.createElement('div');
-        el.className = 'log-entry';
-        const label = entry.closed ? entry.id + ' — case closed' : entry.id + ' — follow-up #' + entry.count;
-        el.innerHTML = '<span>' + label + '</span><span style="color:var(--text-tertiary)">' + formatDate(entry.date) + '</span>';
-        logList.appendChild(el);
+      log.slice(0, 60).forEach(e => {
+        const el = document.createElement('div'); el.className = 'log-item';
+        const left = document.createElement('div'); left.className = 'log-left';
+        const idTag = document.createElement('span'); idTag.className = 'log-id'; idTag.textContent = e.id;
+        const lbl = document.createElement('span'); lbl.className = 'log-label'; lbl.textContent = e.closed ? 'Case closed' : 'Follow-up #' + e.count;
+        left.appendChild(idTag); left.appendChild(lbl);
+        const dt = document.createElement('span'); dt.className = 'log-date'; dt.textContent = formatDate(e.date);
+        el.appendChild(left); el.appendChild(dt); logList.appendChild(el);
       });
     }
   }
@@ -475,8 +548,7 @@
     btn.classList.add('active');
   }
 
-  load();
-  render();
+  load(); render();
 </script>
 </body>
 </html>
